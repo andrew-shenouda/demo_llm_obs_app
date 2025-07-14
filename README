@@ -1,0 +1,10 @@
+To set up the backend, when first downloading the app: 
+python3 -m venv venv
+source venv/bin/activate
+pip install fastapi uvicorn openai python-dotenv
+
+Then to run the backend:
+uvicorn main:app --reload
+
+To set up the frontend:
+ust open frontend/index.html in your browser.
