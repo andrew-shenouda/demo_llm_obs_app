@@ -34,7 +34,7 @@ class AgentResponse(BaseModel):
 # ───────────────────────────────
 # TASK SPAN – tiny synchronous step
 # ───────────────────────────────
-# TODO: @task(name="sanitize_input")
+# TODO: @task
 def sanitize_input(text: str) -> str:
     """Strip whitespace and cap length."""
     return text.strip()[:8_000]
@@ -42,7 +42,7 @@ def sanitize_input(text: str) -> str:
 # ───────────────────────────────
 # LLM SPAN – intent classification
 # ───────────────────────────────
-# TODO: @llm(name="intent_classifier", model_name="gpt-4o", model_provider="openai")
+# TODO: @tool
 def classify_intent_llm(question: str) -> str:
     """
     Ask an LLM to return one of: weather / stocks / sports / general.
@@ -64,17 +64,17 @@ def classify_intent_llm(question: str) -> str:
 # ───────────────────────────────
 # TOOL SPANs – external service stubs
 # ───────────────────────────────
-# TODO: @tool(name="call_weather_api")
+# TODO: @tool
 def call_weather_api(location: str = "New York") -> Dict[str, Any]:
     """Return a mock weather report."""
     return {"location": location, "temperature_c": 24, "condition": "Partly cloudy"}
 
-# TODO: @tool(name="call_stock_api")
+# TODO: @tool
 def call_stock_api(ticker: str = "AAPL") -> Dict[str, Any]:
     """Return a mock daily stock quote."""
     return {"ticker": ticker.upper(), "price_usd": 218.37, "change_pct": +1.9}
 
-# TODO: @tool(name="call_sports_api")
+# TODO: @tool
 def call_sports_api(team: str = "LAL") -> Dict[str, Any]:
     """Return a mock sports score."""
     return {
@@ -88,7 +88,7 @@ def call_sports_api(team: str = "LAL") -> Dict[str, Any]:
 # ───────────────────────────────
 # LLM SPAN – answer formatting
 # ───────────────────────────────
-# TODO: @llm(name="formatter", model_name="gpt-4o", model_provider="openai")
+# TODO: @tool
 def format_answer_llm(tool_name: str, tool_payload: Dict[str, Any], question: str) -> str:
     """Turn raw tool data into a friendly Markdown reply."""
     sys = (
@@ -112,7 +112,7 @@ def format_answer_llm(tool_name: str, tool_payload: Dict[str, Any], question: st
 # ───────────────────────────────
 # LLM SPAN – fallback chat
 # ───────────────────────────────
-# TODO: @llm(name="general_chat", model_name="gpt-4o", model_provider="openai")
+# TODO: @tool   
 def general_chat_llm(question: str, history: List[str]) -> str:
     """Normal conversational fallback when no tool is needed."""
     messages: List[Dict[str, str]] = []
@@ -143,7 +143,7 @@ def general_chat_llm(question: str, history: List[str]) -> str:
 # ───────────────────────────────
 # AGENT SPAN – dynamic orchestration
 # ───────────────────────────────
-# TODO: @agent(name="decision_agent")
+# TODO: @agent
 def decision_agent(question: str, history: List[str]) -> str:
     """
     1. Use LLM to classify intent
@@ -170,7 +170,7 @@ def decision_agent(question: str, history: List[str]) -> str:
 # ───────────────────────────────
 # WORKFLOW SPAN – top‑level flow
 # ───────────────────────────────
-# TODO: @workflow(name="chat_workflow")
+# TODO: @workflow
 def chat_workflow(user_msg: str, history: List[str]) -> str:
     """End‑to‑end processing for one incoming message."""
     cleaned = sanitize_input(user_msg)
