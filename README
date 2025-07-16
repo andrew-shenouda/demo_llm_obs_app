@@ -1,8 +1,9 @@
-Navigate to the backend directory in your terminal:
+If it's your first time running the project, create a virtual environment:
+python3 -m venv chatbot_venv
 
-Then, run: 
-python3 -m venv venv
-source venv/bin/activate
+For your first time and every time you want to run the project, start your virtual environment 
+by navigating to the backend directory in your terminal and running: 
+source chatbot_venv/bin/activate
 
 If it's your first time running the project, also run:
 pip install fastapi uvicorn openai python-dotenv
