@@ -16,7 +16,6 @@ open index.html
 
 --------------------------------
 
-**Note:**
-
+NOTE:
 - if you are instrumenting, the only file you need to change is agent_endpoints.py
 - do *not* push your changes. Keep the template as is so others can start fresh too.
