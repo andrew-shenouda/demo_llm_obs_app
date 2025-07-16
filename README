@@ -10,5 +10,5 @@ pip install fastapi uvicorn openai python-dotenv
 Then to, finishing starting up the backend, run:
 uvicorn main:app --reload
 
-To set up the frontend, navigate to the frontend directory in your terminal:
-Run "open index.html".
+To set up the frontend, navigate to the frontend directory in your terminal and run:
+open index.html
