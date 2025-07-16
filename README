@@ -5,7 +5,7 @@ source venv/bin/activate
 Only on first install, run:
 pip install fastapi uvicorn openai python-dotenv
 
-Then to run the backend:
+Then to start the backend:
 uvicorn main:app --reload
 
 To set up the frontend:

@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from endpoints import agent_router
+from agent_endpoints import agent_router
 
 # Create the FastAPI application instance
 app = FastAPI()
