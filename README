@@ -1,12 +1,14 @@
-First, run: 
+Navigate to the backend directory in your terminal:
+
+Then, run: 
 python3 -m venv venv
 source venv/bin/activate
 
-Only on first install, run:
+If it's your first time running the project, also run:
 pip install fastapi uvicorn openai python-dotenv
 
-Then to start the backend:
+Then to, finishing starting up the backend, run:
 uvicorn main:app --reload
 
-To set up the frontend:
+To set up the frontend, navigate to the frontend directory in your terminal:
 Run "open index.html".
