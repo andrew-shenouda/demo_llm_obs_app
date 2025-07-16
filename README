@@ -13,3 +13,8 @@ uvicorn main:app --reload
 
 To set up the frontend, navigate to the frontend directory in your terminal and run:
 open index.html
+
+**Note:**
+
+- if you are instrumenting, the only file you need to change is agent_endpoints.py
+- **do not** push your changes. Keep the template as is so others can start fresh too.
