@@ -1,21 +1,64 @@
-If it's your first time running the project, create a virtual environment:
-python3 -m venv chatbot_venv
+# Demo LLM OBS App
 
-For your first time and every time you want to run the project, start your virtual environment 
-by navigating to the backend directory in your terminal and running: 
-source chatbot_venv/bin/activate
+A demo application with a backend API and frontend interface.
 
-If it's your first time running the project, also run:
-pip install fastapi uvicorn openai python-dotenv
+## Setup Instructions
 
-Then to, finishing starting up the backend, run:
-uvicorn main:app --reload
+### Backend Setup
 
-To set up the frontend, navigate to the frontend directory in your terminal and run:
-open index.html
+1. **Navigate to the backend directory:**
+   ```bash
+   cd backend
+   ```
 
---------------------------------
+2. **Create a virtual environment (first time only):**
+   ```bash
+   python3 -m venv chatbot_venv
+   ```
 
-NOTE:
-- if you are instrumenting, the only file you need to change is agent_endpoints.py
-- do *not* push your changes. Keep the template as is so others can start fresh too.
+3. **Activate the virtual environment (every time you run the project):**
+   ```bash
+   source chatbot_venv/bin/activate
+   ```
+
+4. **Install dependencies (first time only):**
+   ```bash
+   pip install fastapi uvicorn openai python-dotenv
+   ```
+
+5. **Start the backend server:**
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+### Frontend Setup
+
+1. **Navigate to the frontend directory:**
+   ```bash
+   cd frontend
+   ```
+
+2. **Open the application in your browser:**
+   ```bash
+   open index.html
+   ```
+
+## Development Notes
+
+- **For instrumentation:** Only modify `backend/agent_endpoints.py`
+- **Important:** Do not push your changes to the repository. Keep the template unchanged so others can start fresh.
+
+## Project Structure
+
+```
+demo_llm_obs_app/
+├── backend/
+│   ├── agent_endpoints.py  # Main file to modify for instrumentation
+│   ├── main.py
+│   └── venv/
+├── frontend/
+│   ├── app.js
+│   ├── index.html
+│   └── styles.css
+└── README
+```
