@@ -15,11 +15,23 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from openai import OpenAI
 
+from ddtrace.llmobs import LLMObs
+
 # ───────────────────────────────
 # Environment / clients
 # ───────────────────────────────
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# ───────────────────────────────
+# Datadog LLMObs 
+# ───────────────────────────────
+# LLMObs.enable(
+#   ml_app="demo-llm-obs-app",
+#   api_key=os.getenv("DATADOG_API_KEY"),
+#   site="datad0g.com",
+#   agentless_enabled=True,
+# )
 
 # ───────────────────────────────
 # Public request / response models

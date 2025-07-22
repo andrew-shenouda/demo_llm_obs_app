@@ -23,7 +23,7 @@ A demo application with a backend API and frontend interface.
 
 4. **Install dependencies (first time only):**
    ```
-   pip install fastapi uvicorn openai python-dotenv
+   pip install fastapi uvicorn openai python-dotenv ddtrace
    ```
 
 5. **Start the backend server:**
@@ -48,6 +48,8 @@ A demo application with a backend API and frontend interface.
 - **For instrumentation:** Only modify `backend/agent_endpoints.py`
 - **Important:** Do not push your changes to the repository. Keep the template unchanged so others can start fresh.
 
+Make sure you add a .env file with OPENAI_API_KEY and DATADOG_API_KEY.
+
 ## Project Structure
 
 ```
@@ -61,4 +63,5 @@ demo_llm_obs_app/
 │   ├── index.html
 │   └── styles.css
 └── README
+|__ env
 ```
