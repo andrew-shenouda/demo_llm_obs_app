@@ -8,6 +8,7 @@ Categories supported: weather • stocks • sports • general chat
 from __future__ import annotations
 
 import os
+import json
 from typing import List, Dict, Any
 
 from dotenv import load_dotenv
@@ -15,7 +16,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from openai import OpenAI
 
-from ddtrace.llmobs import LLMObs
+from ddtrace.llmobs.decorators import *
 
 # ───────────────────────────────
 # Environment / clients
@@ -26,6 +27,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # ───────────────────────────────
 # Datadog LLMObs 
 # ───────────────────────────────
+# TODO: enable Datadog LLMObs
 # LLMObs.enable(
 #   ml_app="demo-llm-obs-app",
 #   api_key=os.getenv("DATADOG_API_KEY"),
@@ -72,6 +74,103 @@ def classify_intent_llm(question: str) -> str:
         messages=[{"role": "user", "content": prompt}],
     )
     return resp.choices[0].message.content.strip().lower()
+
+# ───────────────────────────────
+# LLM SPAN – tool selection
+# ───────────────────────────────
+# TODO: @tool
+def select_tool_llm(intent: str, question: str) -> Dict[str, Any]:
+    """
+    Use function calling to decide which specific API to call based on intent and question.
+    """
+    tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "call_weather_api",
+                "description": "Get current weather information for a specific location.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "City name e.g. New York, Paris, Tokyo"
+                        }
+                    },
+                    "required": ["location"],
+                    "additionalProperties": False
+                },
+                "strict": True
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "call_stock_api",
+                "description": "Get current stock price and daily change for a ticker symbol.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "ticker": {
+                            "type": "string",
+                            "description": "Stock ticker symbol e.g. AAPL, GOOGL, TSLA"
+                        }
+                    },
+                    "required": ["ticker"],
+                    "additionalProperties": False
+                },
+                "strict": True
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "call_sports_api",
+                "description": "Get current sports score for a team.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "team": {
+                            "type": "string",
+                            "description": "Team abbreviation e.g. LAL, BOS, NYK"
+                        }
+                    },
+                    "required": ["team"],
+                    "additionalProperties": False
+                },
+                "strict": True
+            }
+        }
+    ]
+    
+    resp = client.chat.completions.create(
+        model="gpt-4o",
+        temperature=0,
+        messages=[
+            {
+                "role": "system", 
+                "content": "You are a tool selector. You MUST ALWAYS call one of the available tools. For sports questions, call call_sports_api with team='LAL'. For stock questions, call call_stock_api with ticker='AAPL'. For weather questions, call call_weather_api with location='New York'. If the question is vague like 'give me the latest on sports scores', use the default values. NEVER respond with text - ONLY call tools."
+            },
+            {"role": "user", "content": f"Intent: {intent}. Question: {question}. Call the appropriate API."}
+        ],
+        tools=tools,
+        tool_choice="auto"
+    )
+    
+    if resp.choices[0].message.tool_calls:
+        tool_call = resp.choices[0].message.tool_calls[0]
+        function_name = tool_call.function.name
+        function_args = json.loads(tool_call.function.arguments)
+        
+        # Execute the function
+        if function_name == "call_weather_api":
+            return call_weather_api(**function_args)
+        elif function_name == "call_stock_api":
+            return call_stock_api(**function_args)
+        elif function_name == "call_sports_api":
+            return call_sports_api(**function_args)
+    
+    return {"error": "No tool called"}
 
 # ───────────────────────────────
 # TOOL SPANs – external service stubs
@@ -124,7 +223,7 @@ def format_answer_llm(tool_name: str, tool_payload: Dict[str, Any], question: st
 # ───────────────────────────────
 # LLM SPAN – fallback chat
 # ───────────────────────────────
-# TODO: @tool   
+# TODO: @tool 
 def general_chat_llm(question: str, history: List[str]) -> str:
     """Normal conversational fallback when no tool is needed."""
     messages: List[Dict[str, str]] = []
@@ -164,20 +263,12 @@ def decision_agent(question: str, history: List[str]) -> str:
     """
     intent = classify_intent_llm(question)
 
-    if intent == "weather":
-        data = call_weather_api()
-        return format_answer_llm("weather", data, question)
-
-    if intent == "stocks":
-        data = call_stock_api()
-        return format_answer_llm("stock‑market", data, question)
-
-    if intent == "sports":
-        data = call_sports_api()
-        return format_answer_llm("sports", data, question)
-
-    # Fallback – no tool
-    return general_chat_llm(question, history)
+    if intent == "general":
+        return general_chat_llm(question, history)
+    
+    # Use function calling to select and execute the appropriate tool
+    data = select_tool_llm(intent, question)
+    return format_answer_llm(intent, data, question)
 
 # ───────────────────────────────
 # WORKFLOW SPAN – top‑level flow

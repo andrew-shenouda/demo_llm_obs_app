@@ -50,6 +50,16 @@ A demo application with a backend API and frontend interface.
 
 Make sure you add a .env file with OPENAI_API_KEY and DATADOG_API_KEY.
 
+## How to test
+
+Ask the chatbot a question related to:
+1. Sports (should result in a tool call using a stub api)
+2. Stocks (should result in a tool call using a stub api)
+3. Weather (should result in a tool call using a stub api)
+4. General (ask about any topic you'd like, this is a normal chat completion)
+
+If you've instrumented correctly, your results in LLMObs should look like the screenshot in fully_instrumented.png
+
 ## Project Structure
 
 ```
